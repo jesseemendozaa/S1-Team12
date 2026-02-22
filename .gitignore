@@ -1,0 +1,4 @@
+tomcat/logs/
+tomcat/temp/
+tomcat/work/
+.DS_Store
