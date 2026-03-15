@@ -1,4 +1,11 @@
-tomcat/logs/
-tomcat/temp/
-tomcat/work/
 .DS_Store
+logs/
+work/
+temp/
+webapps/ROOT/
+webapps/docs/
+webapps/examples/
+webapps/host-manager/
+webapps/manager/
+.idea/
+*.iml
