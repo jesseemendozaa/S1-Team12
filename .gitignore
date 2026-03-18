@@ -1,11 +1,42 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Java compiled
+*.class
+
+# Tomcat installation files (should not be in repo)
+bin/
+conf/
+lib/
 logs/
-work/
 temp/
+work/
+BUILDING.txt
+CONTRIBUTING.md
+LICENSE
+NOTICE
+README.md
+RELEASE-NOTES
+RUNNING.txt
+
+# Tomcat default webapps
 webapps/ROOT/
 webapps/docs/
 webapps/examples/
 webapps/host-manager/
 webapps/manager/
-.idea/
-*.iml
+
+# Old Website folder (renamed to FishFinderNorCal)
+webapps/Website/
+
+# Local machine config (passwords, credentials)
+.my.cnf
+
+# Claude Code local config
+.claude/
