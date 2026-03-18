@@ -1,0 +1,685 @@
+/* ============================================================
+   FishFinder NorCal — Ocean / Fishing Theme Stylesheet
+   ============================================================ */
+
+/* ---------- CSS Variables ---------- */
+:root {
+    --primary:      #1a5276;
+    --primary-dark:  #0e3d5c;
+    --secondary:    #2e86c1;
+    --accent:       #f39c12;
+    --bg:           #f0f4f8;
+    --text:         #2c3e50;
+    --white:        #ffffff;
+    --danger:       #e74c3c;
+    --success:      #27ae60;
+    --light-border: #dce6f0;
+}
+
+/* ---------- Universal Reset ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ---------- Body ---------- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Links ---------- */
+a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+/* ============================================================
+   Navigation — full-width bar
+   ============================================================ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary);
+    padding: 0 2rem;
+    height: 56px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-brand {
+    color: var(--white) !important;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.navbar-brand:hover {
+    color: var(--accent) !important;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.navbar-links a {
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.navbar-links a:hover {
+    background-color: rgba(255,255,255,0.12);
+    color: var(--white);
+}
+
+.navbar-links a.active {
+    background-color: rgba(255,255,255,0.18);
+    color: var(--white);
+}
+
+/* Spacer so content doesn't hide behind fixed nav */
+.main-content {
+    margin-top: 56px;
+    flex: 1;
+}
+
+/* ============================================================
+   Container
+   ============================================================ */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* ============================================================
+   Hero Section (home page)
+   ============================================================ */
+.hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+}
+
+.hero h1 {
+    font-size: 2.2rem;
+    border-bottom: none;
+    margin-bottom: 0.75rem;
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.hero p {
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+/* ============================================================
+   Page Headers
+   ============================================================ */
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--accent);
+    color: var(--primary);
+}
+
+h2 {
+    font-size: 1.4rem;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+h3 {
+    font-size: 1.15rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+    display: inline-block;
+    padding: 0.55rem 1.3rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background-color: var(--secondary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: #2474a8;
+    color: var(--white);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.btn-accent:hover {
+    background-color: #d68910;
+    color: var(--white);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+    color: var(--white);
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background-color: #1e8c4e;
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.82rem;
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+.form-card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    max-width: 550px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"],
+form input[type="date"],
+form input[type="time"],
+form input[type="url"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--light-border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+form .form-group {
+    margin-bottom: 1rem;
+}
+
+form button[type="submit"],
+form .btn-submit {
+    background-color: var(--secondary);
+    color: var(--white);
+    padding: 0.65rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+form button[type="submit"]:hover,
+form .btn-submit:hover {
+    background-color: #2474a8;
+}
+
+.form-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: -0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+   Cards & Card Grid
+   ============================================================ */
+.card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    transition: box-shadow 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.13);
+}
+
+.card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.card p {
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin: 0.5rem 0;
+}
+
+/* ============================================================
+   Tables
+   ============================================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+table thead th {
+    background-color: var(--primary);
+    color: var(--white);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+}
+
+table tbody td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--light-border);
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f7fafc;
+}
+
+table tbody tr:hover {
+    background-color: #edf2f7;
+}
+
+/* ============================================================
+   Alerts / Flash Messages
+   ============================================================ */
+.alert {
+    padding: 0.85rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+    transition: opacity 0.5s;
+}
+
+.alert-success {
+    background-color: #d4efdf;
+    color: #1a7a3d;
+    border-left: 4px solid var(--success);
+}
+
+.alert-error {
+    background-color: #fadbd8;
+    color: #922b21;
+    border-left: 4px solid var(--danger);
+}
+
+.alert-info {
+    background-color: #d6eaf8;
+    color: #1a5276;
+    border-left: 4px solid var(--secondary);
+}
+
+/* ============================================================
+   Search Bar
+   ============================================================ */
+.search-bar {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--light-border);
+    border-radius: 6px 0 0 6px;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.search-bar input:focus {
+    border-color: var(--accent);
+}
+
+.search-bar button {
+    padding: 0.6rem 1.2rem;
+    background-color: var(--secondary);
+    color: var(--white);
+    border: none;
+    border-radius: 0 6px 6px 0;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-bar button:hover {
+    background-color: #2474a8;
+}
+
+/* ============================================================
+   Badges
+   ============================================================ */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-active {
+    background-color: #d4efdf;
+    color: var(--success);
+}
+
+.badge-suspended {
+    background-color: #fadbd8;
+    color: var(--danger);
+}
+
+.badge-deleted {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+    background-color: var(--primary);
+    color: var(--white);
+    text-align: center;
+    padding: 1.25rem 1rem;
+    margin-top: auto;
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: var(--accent);
+}
+
+/* ============================================================
+   Detail Page — Info Grid
+   ============================================================ */
+.detail-section {
+    margin-bottom: 2rem;
+}
+
+.detail-section h2 {
+    border-bottom: 2px solid var(--light-border);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0.6rem 1.5rem;
+}
+
+.info-grid .label {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.info-grid .value {
+    color: var(--text);
+}
+
+/* ============================================================
+   Comments Section
+   ============================================================ */
+.comment-list {
+    margin-top: 1rem;
+}
+
+.comment-box {
+    background: var(--white);
+    border-left: 3px solid var(--secondary);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    margin-left: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.comment-box .comment-meta {
+    font-size: 0.82rem;
+    color: #888;
+    margin-bottom: 0.4rem;
+}
+
+.comment-box .comment-meta strong {
+    color: var(--primary);
+}
+
+.comment-box .comment-body {
+    color: var(--text);
+}
+
+/* ============================================================
+   Favorite Button
+   ============================================================ */
+.btn-favorite {
+    background: none;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-favorite::before {
+    content: "\2606";  /* empty star */
+    margin-right: 0.35rem;
+}
+
+.btn-favorite.favorited {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+.btn-favorite.favorited::before {
+    content: "\2605";  /* filled star */
+}
+
+.btn-favorite:hover {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+/* ============================================================
+   Login / Register — Centered Card
+   ============================================================ */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3rem 1rem;
+}
+
+.auth-card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-card h1 {
+    text-align: center;
+    border-bottom: none;
+    margin-bottom: 1.5rem;
+}
+
+.auth-card .form-footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* ============================================================
+   Responsive — max-width 768px
+   ============================================================ */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .navbar-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.15rem;
+    }
+
+    .main-content {
+        margin-top: 100px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .auth-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-bar input {
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-bar button {
+        border-radius: 6px;
+    }
+
+    .hero h1 {
+        font-size: 1.6rem;
+    }
+}
