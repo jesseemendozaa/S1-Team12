@@ -33,8 +33,9 @@ public class LocationFormServlet extends HttpServlet {
         int userId = (int) session.getAttribute("userId");
         String name = request.getParameter("name");
         String description = request.getParameter("description");
-        String city = request.getParameter("city");
-        String address = request.getParameter("address");
+        String region = request.getParameter("region");
+        String latitudeStr = request.getParameter("latitude");
+        String longitudeStr = request.getParameter("longitude");
         String typeIdStr = request.getParameter("typeId");
 
         if (name == null || name.trim().isEmpty()) {
@@ -47,20 +48,31 @@ public class LocationFormServlet extends HttpServlet {
 
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO Locations (location_name, description, city, address, type_id, created_by_user_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                "INSERT INTO Locations (name, description, latitude, longitude, region, type_id, created_by) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name.trim());
             ps.setString(2, description != null ? description.trim() : null);
-            ps.setString(3, city != null ? city.trim() : null);
-            ps.setString(4, address != null ? address.trim() : null);
 
-            if (typeIdStr != null && !typeIdStr.trim().isEmpty()) {
-                ps.setInt(5, Integer.parseInt(typeIdStr));
+            if (latitudeStr != null && !latitudeStr.trim().isEmpty()) {
+                ps.setBigDecimal(3, new java.math.BigDecimal(latitudeStr.trim()));
             } else {
-                ps.setNull(5, Types.INTEGER);
+                ps.setNull(3, Types.DECIMAL);
+            }
+            if (longitudeStr != null && !longitudeStr.trim().isEmpty()) {
+                ps.setBigDecimal(4, new java.math.BigDecimal(longitudeStr.trim()));
+            } else {
+                ps.setNull(4, Types.DECIMAL);
             }
 
-            ps.setInt(6, userId);
+            ps.setString(5, region != null ? region.trim() : null);
+
+            if (typeIdStr != null && !typeIdStr.trim().isEmpty()) {
+                ps.setInt(6, Integer.parseInt(typeIdStr));
+            } else {
+                ps.setNull(6, Types.INTEGER);
+            }
+
+            ps.setInt(7, userId);
             ps.executeUpdate();
 
             ResultSet keys = ps.getGeneratedKeys();

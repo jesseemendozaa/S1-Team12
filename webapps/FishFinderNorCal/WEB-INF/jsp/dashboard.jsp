@@ -46,7 +46,7 @@
     <tbody>
         <% for (Map<String, Object> report : recentReports) { %>
         <tr>
-            <td><a href="${pageContext.request.contextPath}/reports?id=<%= report.get("reportId") %>"><%= report.get("catchDate") %></a></td>
+            <td><a href="${pageContext.request.contextPath}/report/edit?id=<%= report.get("reportId") %>"><%= report.get("catchDate") %></a></td>
             <td><%= report.get("speciesName") %></td>
             <td><%= report.get("locationName") %></td>
             <td><%= report.get("username") %></td>
@@ -58,15 +58,6 @@
 </table>
 <% } else { %>
 <p>No catch reports yet. Be the first to log a catch!</p>
-<% } %>
-
-<% if ("moderator".equals(session.getAttribute("role"))) { %>
-<h2>Moderator Tools</h2>
-<div class="card">
-    <h3>Moderation</h3>
-    <p>Manage users, review reports, and moderate content.</p>
-    <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-primary">Manage Users</a>
-</div>
 <% } %>
 
 <h2>Quick Actions</h2>

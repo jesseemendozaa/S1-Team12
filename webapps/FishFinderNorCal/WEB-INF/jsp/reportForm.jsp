@@ -77,8 +77,8 @@ if (error != null) {
     <input type="number" id="lengthInches" name="lengthInches" step="0.01" min="0"
            value="<%= isEdit && report != null && report.get("lengthInches") != null ? report.get("lengthInches") : "" %>">
 
-    <label for="method">Time of Day</label>
-    <input type="time" id="method" name="method"
+    <label for="method">Method / Time of Day</label>
+    <input type="text" id="method" name="method"
            value="<%= isEdit && report != null && report.get("method") != null ? report.get("method") : "" %>">
 
     <label for="notes">Notes</label>

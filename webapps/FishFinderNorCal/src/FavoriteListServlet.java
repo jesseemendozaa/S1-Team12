@@ -21,20 +21,20 @@ public class FavoriteListServlet extends HttpServlet {
 
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT l.location_id, l.location_name, l.city, lt.type_name, f.favorited_at " +
+                "SELECT l.location_id, l.name, l.region, lt.type_name, f.created_at " +
                 "FROM Favorites f " +
                 "JOIN Locations l ON f.location_id = l.location_id " +
                 "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id " +
-                "WHERE f.user_id = ? ORDER BY f.favorited_at DESC");
+                "WHERE f.user_id = ? ORDER BY f.created_at DESC");
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map<String, Object> fav = new HashMap<>();
                 fav.put("locationId", rs.getInt("location_id"));
-                fav.put("name", rs.getString("location_name"));
-                fav.put("region", rs.getString("city"));
+                fav.put("name", rs.getString("name"));
+                fav.put("region", rs.getString("region"));
                 fav.put("typeName", rs.getString("type_name"));
-                fav.put("favoritedAt", rs.getTimestamp("favorited_at"));
+                fav.put("favoritedAt", rs.getTimestamp("created_at"));
                 favorites.add(fav);
             }
         } catch (SQLException e) {

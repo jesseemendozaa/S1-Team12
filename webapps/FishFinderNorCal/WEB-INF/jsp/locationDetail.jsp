@@ -78,7 +78,7 @@ if (species == null || species.isEmpty()) {
     for (Map<String, Object> sp : species) {
 %>
             <tr>
-                <td><a href="<%= request.getContextPath() %>/species?id=<%= sp.get("speciesId") %>"><%= sp.get("commonName") %></a></td>
+                <td><%= sp.get("commonName") %></td>
                 <td><em><%= sp.get("scientificName") %></em></td>
                 <td><%= sp.get("evidenceCount") %></td>
                 <td><%= sp.get("lastReported") != null ? sp.get("lastReported") : "N/A" %></td>
@@ -137,14 +137,6 @@ if (reports == null || reports.isEmpty()) {
 if (sess != null && sess.getAttribute("userId") != null) {
 %>
     <p><a href="<%= request.getContextPath() %>/report/new?locationId=<%= locationId %>" class="btn">Log a Catch Here</a></p>
-<%
-}
-%>
-
-<%
-if (sess != null && sess.getAttribute("role") != null && "moderator".equals(sess.getAttribute("role"))) {
-%>
-    <p><a href="<%= request.getContextPath() %>/location/edit?id=<%= locationId %>" class="btn btn-secondary">Edit Location</a></p>
 <%
 }
 %>

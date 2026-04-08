@@ -24,9 +24,6 @@
                 <a href="${pageContext.request.contextPath}/reports">Reports</a>
                 <a href="${pageContext.request.contextPath}/favorites">Favorites</a>
                 <a href="${pageContext.request.contextPath}/account">Account</a>
-                <% if ("moderator".equals(session.getAttribute("role"))) { %>
-                    <a href="${pageContext.request.contextPath}/admin/users">Manage</a>
-                <% } %>
                 <a href="${pageContext.request.contextPath}/logout">Logout</a>
             <% } %>
         </div>

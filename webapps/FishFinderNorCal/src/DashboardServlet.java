@@ -48,8 +48,8 @@ public class DashboardServlet extends HttpServlet {
 
             // Get recent reports (last 5)
             PreparedStatement ps5 = conn.prepareStatement(
-                "SELECT cr.report_id, cr.catch_date, cr.weight, cr.size, " +
-                "s.common_name, l.location_name, u.username " +
+                "SELECT cr.report_id, cr.catch_date, cr.weight_lbs, cr.length_inches, " +
+                "s.common_name, l.name as location_name, u.username " +
                 "FROM CatchReports cr " +
                 "JOIN Species s ON cr.species_id = s.species_id " +
                 "JOIN Locations l ON cr.location_id = l.location_id " +
@@ -61,8 +61,8 @@ public class DashboardServlet extends HttpServlet {
                 java.util.Map<String, Object> report = new java.util.HashMap<>();
                 report.put("reportId", rs5.getInt("report_id"));
                 report.put("catchDate", rs5.getString("catch_date"));
-                report.put("weightLbs", rs5.getBigDecimal("weight"));
-                report.put("lengthInches", rs5.getBigDecimal("size"));
+                report.put("weightLbs", rs5.getBigDecimal("weight_lbs"));
+                report.put("lengthInches", rs5.getBigDecimal("length_inches"));
                 report.put("speciesName", rs5.getString("common_name"));
                 report.put("locationName", rs5.getString("location_name"));
                 report.put("username", rs5.getString("username"));

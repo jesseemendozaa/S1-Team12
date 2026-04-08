@@ -29,7 +29,7 @@ public class CatchReportEditServlet extends HttpServlet {
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(
                 "SELECT cr.*, s.common_name as species_name, s.species_id, " +
-                "l.location_name, l.location_id, u.username " +
+                "l.name as location_name, l.location_id, u.username " +
                 "FROM CatchReports cr " +
                 "JOIN Species s ON cr.species_id = s.species_id " +
                 "JOIN Locations l ON cr.location_id = l.location_id " +
@@ -49,9 +49,9 @@ public class CatchReportEditServlet extends HttpServlet {
             report.put("locationId", rs.getInt("location_id"));
             report.put("speciesId", rs.getInt("species_id"));
             report.put("catchDate", rs.getString("catch_date"));
-            report.put("weightLbs", rs.getBigDecimal("weight"));
-            report.put("lengthInches", rs.getBigDecimal("size"));
-            report.put("method", rs.getString("time_of_day"));
+            report.put("weightLbs", rs.getBigDecimal("weight_lbs"));
+            report.put("lengthInches", rs.getBigDecimal("length_inches"));
+            report.put("method", rs.getString("method"));
             report.put("notes", rs.getString("notes"));
             report.put("createdAt", rs.getTimestamp("created_at"));
             report.put("speciesName", rs.getString("species_name"));
@@ -81,9 +81,9 @@ public class CatchReportEditServlet extends HttpServlet {
             } else {
                 // Load comments for detail view
                 PreparedStatement cps = conn.prepareStatement(
-                    "SELECT c.comment_id, c.comment_text, c.commented_at, u.username " +
+                    "SELECT c.comment_id, c.comment_text, c.created_at, u.username " +
                     "FROM Comments c LEFT JOIN Users u ON c.user_id = u.user_id " +
-                    "WHERE c.report_id = ? ORDER BY c.commented_at ASC");
+                    "WHERE c.report_id = ? ORDER BY c.created_at ASC");
                 cps.setInt(1, reportId);
                 ResultSet crs = cps.executeQuery();
                 List<Map<String, Object>> comments = new ArrayList<>();
@@ -91,7 +91,7 @@ public class CatchReportEditServlet extends HttpServlet {
                     Map<String, Object> c = new HashMap<>();
                     c.put("commentId", crs.getInt("comment_id"));
                     c.put("commentText", crs.getString("comment_text"));
-                    c.put("createdAt", crs.getTimestamp("commented_at"));
+                    c.put("createdAt", crs.getTimestamp("created_at"));
                     c.put("username", crs.getString("username"));
                     comments.add(c);
                 }
@@ -162,7 +162,7 @@ public class CatchReportEditServlet extends HttpServlet {
 
                 PreparedStatement updatePs = conn.prepareStatement(
                     "UPDATE CatchReports SET location_id=?, species_id=?, catch_date=?, " +
-                    "weight=?, size=?, time_of_day=?, notes=? WHERE report_id=?");
+                    "weight_lbs=?, length_inches=?, method=?, notes=? WHERE report_id=?");
                 updatePs.setInt(1, Integer.parseInt(locationIdStr));
                 updatePs.setInt(2, Integer.parseInt(speciesIdStr));
                 updatePs.setDate(3, java.sql.Date.valueOf(catchDate));
@@ -178,9 +178,9 @@ public class CatchReportEditServlet extends HttpServlet {
                     updatePs.setNull(5, Types.DECIMAL);
                 }
                 if (method != null && !method.trim().isEmpty()) {
-                    updatePs.setTime(6, java.sql.Time.valueOf(method.trim() + ":00"));
+                    updatePs.setString(6, method.trim());
                 } else {
-                    updatePs.setNull(6, Types.TIME);
+                    updatePs.setNull(6, Types.VARCHAR);
                 }
                 updatePs.setString(7, notes != null ? notes.trim() : null);
                 updatePs.setInt(8, reportId);
@@ -196,12 +196,12 @@ public class CatchReportEditServlet extends HttpServlet {
 
     private void loadDropdowns(HttpServletRequest request, Connection conn) throws SQLException {
         List<Map<String, Object>> locations = new ArrayList<>();
-        PreparedStatement ps1 = conn.prepareStatement("SELECT location_id, location_name FROM Locations ORDER BY location_name");
+        PreparedStatement ps1 = conn.prepareStatement("SELECT location_id, name FROM Locations ORDER BY name");
         ResultSet rs1 = ps1.executeQuery();
         while (rs1.next()) {
             Map<String, Object> m = new HashMap<>();
             m.put("locationId", rs1.getInt("location_id"));
-            m.put("name", rs1.getString("location_name"));
+            m.put("name", rs1.getString("name"));
             locations.add(m);
         }
         request.setAttribute("locations", locations);

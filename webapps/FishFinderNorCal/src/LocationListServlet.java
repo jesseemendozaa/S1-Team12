@@ -14,14 +14,16 @@ public class LocationListServlet extends HttpServlet {
         List<Map<String, Object>> locations = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection()) {
-            String sql = "SELECT l.location_id, l.location_name, l.description, l.city, " +
+            String sql = "SELECT DISTINCT l.location_id, l.name, l.description, l.region, " +
                          "lt.type_name " +
                          "FROM Locations l " +
-                         "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id";
+                         "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id " +
+                         "LEFT JOIN LocationSpecies ls ON l.location_id = ls.location_id " +
+                         "LEFT JOIN Species s ON ls.species_id = s.species_id";
             if (search != null && !search.trim().isEmpty()) {
-                sql += " WHERE l.location_name LIKE ? OR l.city LIKE ? OR lt.type_name LIKE ?";
+                sql += " WHERE l.name LIKE ? OR l.region LIKE ? OR lt.type_name LIKE ? OR s.common_name LIKE ?";
             }
-            sql += " ORDER BY l.location_name";
+            sql += " ORDER BY l.name";
 
             PreparedStatement ps = conn.prepareStatement(sql);
             if (search != null && !search.trim().isEmpty()) {
@@ -29,15 +31,16 @@ public class LocationListServlet extends HttpServlet {
                 ps.setString(1, pattern);
                 ps.setString(2, pattern);
                 ps.setString(3, pattern);
+                ps.setString(4, pattern);
             }
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map<String, Object> loc = new HashMap<>();
                 loc.put("locationId", rs.getInt("location_id"));
-                loc.put("name", rs.getString("location_name"));
+                loc.put("name", rs.getString("name"));
                 loc.put("description", rs.getString("description"));
-                loc.put("region", rs.getString("city"));
+                loc.put("region", rs.getString("region"));
                 loc.put("typeName", rs.getString("type_name"));
                 locations.add(loc);
             }

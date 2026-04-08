@@ -59,7 +59,7 @@ public class CatchReportFormServlet extends HttpServlet {
             int speciesId = Integer.parseInt(speciesIdStr);
 
             PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO CatchReports (user_id, location_id, species_id, catch_date, weight, size, time_of_day, notes) " +
+                "INSERT INTO CatchReports (user_id, location_id, species_id, catch_date, weight_lbs, length_inches, method, notes) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, userId);
             ps.setInt(2, locationId);
@@ -78,9 +78,9 @@ public class CatchReportFormServlet extends HttpServlet {
             }
 
             if (method != null && !method.trim().isEmpty()) {
-                ps.setTime(7, java.sql.Time.valueOf(method.trim() + ":00"));
+                ps.setString(7, method.trim());
             } else {
-                ps.setNull(7, Types.TIME);
+                ps.setNull(7, Types.VARCHAR);
             }
             ps.setString(8, notes != null ? notes.trim() : null);
             ps.executeUpdate();
@@ -124,12 +124,12 @@ public class CatchReportFormServlet extends HttpServlet {
         try (Connection conn = DBUtil.getConnection()) {
             // Load locations
             List<Map<String, Object>> locations = new ArrayList<>();
-            PreparedStatement ps1 = conn.prepareStatement("SELECT location_id, location_name FROM Locations ORDER BY location_name");
+            PreparedStatement ps1 = conn.prepareStatement("SELECT location_id, name FROM Locations ORDER BY name");
             ResultSet rs1 = ps1.executeQuery();
             while (rs1.next()) {
                 Map<String, Object> m = new HashMap<>();
                 m.put("locationId", rs1.getInt("location_id"));
-                m.put("name", rs1.getString("location_name"));
+                m.put("name", rs1.getString("name"));
                 locations.add(m);
             }
             request.setAttribute("locations", locations);

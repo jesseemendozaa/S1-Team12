@@ -18,8 +18,8 @@ public class CatchReportListServlet extends HttpServlet {
 
         try (Connection conn = DBUtil.getConnection()) {
             StringBuilder sql = new StringBuilder(
-                "SELECT cr.report_id, cr.catch_date, cr.weight, cr.size, cr.time_of_day, " +
-                "s.common_name as species_name, l.location_name, l.location_id, " +
+                "SELECT cr.report_id, cr.catch_date, cr.weight_lbs, cr.length_inches, cr.method, " +
+                "s.common_name as species_name, l.name as location_name, l.location_id, " +
                 "u.username, cr.user_id " +
                 "FROM CatchReports cr " +
                 "JOIN Species s ON cr.species_id = s.species_id " +
@@ -60,9 +60,9 @@ public class CatchReportListServlet extends HttpServlet {
                 Map<String, Object> r = new HashMap<>();
                 r.put("reportId", rs.getInt("report_id"));
                 r.put("catchDate", rs.getString("catch_date"));
-                r.put("weightLbs", rs.getBigDecimal("weight"));
-                r.put("lengthInches", rs.getBigDecimal("size"));
-                r.put("method", rs.getString("time_of_day"));
+                r.put("weightLbs", rs.getBigDecimal("weight_lbs"));
+                r.put("lengthInches", rs.getBigDecimal("length_inches"));
+                r.put("method", rs.getString("method"));
                 r.put("speciesName", rs.getString("species_name"));
                 r.put("locationName", rs.getString("location_name"));
                 r.put("locationId", rs.getInt("location_id"));

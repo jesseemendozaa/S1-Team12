@@ -22,7 +22,7 @@
                 <span class="badge"><%= fav.get("typeName") %></span>
             <% } %>
             <% if (fav.get("region") != null) { %>
-                <p><strong>City:</strong> <%= fav.get("region") %></p>
+                <p><strong>Region:</strong> <%= fav.get("region") %></p>
             <% } %>
             <% if (fav.get("favoritedAt") != null) { %>
                 <p><strong>Favorited:</strong> <%= fav.get("favoritedAt") %></p>

@@ -30,7 +30,7 @@ public class LocationDetailServlet extends HttpServlet {
                 "SELECT l.*, lt.type_name, u.username as creator_name " +
                 "FROM Locations l " +
                 "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id " +
-                "LEFT JOIN Users u ON l.created_by_user_id = u.user_id " +
+                "LEFT JOIN Users u ON l.created_by = u.user_id " +
                 "WHERE l.location_id = ?");
             ps.setInt(1, locationId);
             ResultSet rs = ps.executeQuery();
@@ -42,17 +42,19 @@ public class LocationDetailServlet extends HttpServlet {
 
             Map<String, Object> location = new HashMap<>();
             location.put("locationId", rs.getInt("location_id"));
-            location.put("name", rs.getString("location_name"));
+            location.put("name", rs.getString("name"));
             location.put("description", rs.getString("description"));
-            location.put("city", rs.getString("city"));
-            location.put("address", rs.getString("address"));
+            location.put("region", rs.getString("region"));
+            location.put("latitude", rs.getBigDecimal("latitude"));
+            location.put("longitude", rs.getBigDecimal("longitude"));
             location.put("typeName", rs.getString("type_name"));
             location.put("creatorName", rs.getString("creator_name"));
+            location.put("createdAt", rs.getTimestamp("created_at"));
             request.setAttribute("location", location);
 
             // Get species at this location
             PreparedStatement ps2 = conn.prepareStatement(
-                "SELECT s.species_id, s.common_name, s.scientific_name, ls.evidence_count " +
+                "SELECT s.species_id, s.common_name, s.scientific_name, ls.evidence_count, ls.last_reported " +
                 "FROM LocationSpecies ls " +
                 "JOIN Species s ON ls.species_id = s.species_id " +
                 "WHERE ls.location_id = ? ORDER BY s.common_name");
@@ -65,13 +67,14 @@ public class LocationDetailServlet extends HttpServlet {
                 sp.put("commonName", rs2.getString("common_name"));
                 sp.put("scientificName", rs2.getString("scientific_name"));
                 sp.put("evidenceCount", rs2.getInt("evidence_count"));
+                sp.put("lastReported", rs2.getDate("last_reported"));
                 species.add(sp);
             }
             request.setAttribute("species", species);
 
             // Get catch reports at this location
             PreparedStatement ps3 = conn.prepareStatement(
-                "SELECT cr.report_id, cr.catch_date, cr.weight, cr.size, cr.time_of_day, " +
+                "SELECT cr.report_id, cr.catch_date, cr.weight_lbs, cr.length_inches, cr.method, " +
                 "s.common_name, u.username " +
                 "FROM CatchReports cr " +
                 "JOIN Species s ON cr.species_id = s.species_id " +
@@ -84,9 +87,9 @@ public class LocationDetailServlet extends HttpServlet {
                 Map<String, Object> r = new HashMap<>();
                 r.put("reportId", rs3.getInt("report_id"));
                 r.put("catchDate", rs3.getString("catch_date"));
-                r.put("weightLbs", rs3.getBigDecimal("weight"));
-                r.put("lengthInches", rs3.getBigDecimal("size"));
-                r.put("method", rs3.getString("time_of_day"));
+                r.put("weightLbs", rs3.getBigDecimal("weight_lbs"));
+                r.put("lengthInches", rs3.getBigDecimal("length_inches"));
+                r.put("method", rs3.getString("method"));
                 r.put("speciesName", rs3.getString("common_name"));
                 r.put("username", rs3.getString("username"));
                 reports.add(r);
