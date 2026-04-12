@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, java.sql.Timestamp" %>
+<%@ page import="java.util.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="header.jsp" />
 
@@ -7,11 +7,9 @@ Map<String, Object> location = (Map<String, Object>) request.getAttribute("locat
 String locName = (String) location.get("name");
 String description = (String) location.get("description");
 String typeName = (String) location.get("typeName");
-String region = (String) location.get("region");
-Object latitude = location.get("latitude");
-Object longitude = location.get("longitude");
+String city = (String) location.get("city");
+String address = (String) location.get("address");
 String creatorName = (String) location.get("creatorName");
-Timestamp createdAt = (Timestamp) location.get("createdAt");
 int locationId = (int) location.get("locationId");
 %>
 
@@ -21,17 +19,14 @@ int locationId = (int) location.get("locationId");
 <% if (typeName != null) { %>
     <p><strong>Type:</strong> <span class="badge"><%= typeName %></span></p>
 <% } %>
-<% if (region != null) { %>
-    <p><strong>Region:</strong> <%= region %></p>
+<% if (city != null) { %>
+    <p><strong>City:</strong> <%= city %></p>
 <% } %>
-<% if (latitude != null && longitude != null) { %>
-    <p><strong>Coordinates:</strong> <%= latitude %>, <%= longitude %></p>
+<% if (address != null) { %>
+    <p><strong>Address:</strong> <%= address %></p>
 <% } %>
 <% if (creatorName != null) { %>
     <p><strong>Created by:</strong> <%= creatorName %></p>
-<% } %>
-<% if (createdAt != null) { %>
-    <p><strong>Created at:</strong> <%= createdAt %></p>
 <% } %>
 <% if (description != null) { %>
     <p><%= description %></p>
@@ -70,7 +65,6 @@ if (species == null || species.isEmpty()) {
                 <th>Common Name</th>
                 <th>Scientific Name</th>
                 <th>Evidence Count</th>
-                <th>Last Reported</th>
             </tr>
         </thead>
         <tbody>
@@ -81,7 +75,6 @@ if (species == null || species.isEmpty()) {
                 <td><a href="<%= request.getContextPath() %>/species?id=<%= sp.get("speciesId") %>"><%= sp.get("commonName") %></a></td>
                 <td><em><%= sp.get("scientificName") %></em></td>
                 <td><%= sp.get("evidenceCount") %></td>
-                <td><%= sp.get("lastReported") != null ? sp.get("lastReported") : "N/A" %></td>
             </tr>
 <%
     }

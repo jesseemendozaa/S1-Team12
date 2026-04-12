@@ -1,5 +1,7 @@
 import java.io.*;
 import java.sql.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -178,7 +180,7 @@ public class CatchReportEditServlet extends HttpServlet {
                     updatePs.setNull(5, Types.DECIMAL);
                 }
                 if (method != null && !method.trim().isEmpty()) {
-                    updatePs.setTime(6, java.sql.Time.valueOf(method.trim() + ":00"));
+                    updatePs.setTime(6, parseTimeValue(method));
                 } else {
                     updatePs.setNull(6, Types.TIME);
                 }
@@ -216,5 +218,21 @@ public class CatchReportEditServlet extends HttpServlet {
             species.add(m);
         }
         request.setAttribute("species", species);
+    }
+
+    private Time parseTimeValue(String value) throws SQLException {
+        String trimmed = value == null ? "" : value.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        try {
+            LocalTime parsedTime = trimmed.length() == 5
+                ? LocalTime.parse(trimmed + ":00")
+                : LocalTime.parse(trimmed);
+            return Time.valueOf(parsedTime);
+        } catch (DateTimeParseException e) {
+            throw new SQLException("Invalid time value: " + trimmed, e);
+        }
     }
 }

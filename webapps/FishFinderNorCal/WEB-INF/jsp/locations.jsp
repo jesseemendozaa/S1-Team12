@@ -5,7 +5,7 @@
 <h1>Fishing Locations</h1>
 
 <form method="GET" action="<%= request.getContextPath() %>/locations" class="search-form">
-    <input type="text" name="search" placeholder="Search by name, region, or type..."
+    <input type="text" name="search" placeholder="Search by name, city, or type..."
            value="<%= request.getAttribute("search") != null ? request.getAttribute("search") : "" %>">
     <button type="submit">Search</button>
 </form>
@@ -23,7 +23,7 @@ if (locations == null || locations.isEmpty()) {
     for (Map<String, Object> loc : locations) {
         String name = (String) loc.get("name");
         String typeName = (String) loc.get("typeName");
-        String region = (String) loc.get("region");
+        String city = (String) loc.get("region");
         String description = (String) loc.get("description");
         int locationId = (int) loc.get("locationId");
 
@@ -40,8 +40,8 @@ if (locations == null || locations.isEmpty()) {
 <% if (typeName != null) { %>
                 <span class="badge"><%= typeName %></span>
 <% } %>
-<% if (region != null) { %>
-                <%= region %>
+<% if (city != null) { %>
+                <%= city %>
 <% } %>
             </p>
             <p><%= truncatedDesc %></p>
