@@ -39,6 +39,7 @@ public class LocationFormServlet extends HttpServlet {
 
         if (name == null || name.trim().isEmpty()) {
             request.setAttribute("error", "Location name is required.");
+            request.setAttribute("location", buildLocationFormState(name, description, city, address, typeIdStr));
             loadLocationTypes(request);
             request.setAttribute("pageTitle", "Add Location");
             request.getRequestDispatcher("/WEB-INF/jsp/locationForm.jsp").forward(request, response);
@@ -76,7 +77,18 @@ public class LocationFormServlet extends HttpServlet {
         }
     }
 
-    private void loadLocationTypes(HttpServletRequest request) throws ServletException {
+    static Map<String, Object> buildLocationFormState(
+            String name, String description, String city, String address, String typeIdStr) {
+        Map<String, Object> location = new HashMap<>();
+        location.put("name", name != null ? name.trim() : null);
+        location.put("description", description != null ? description.trim() : null);
+        location.put("city", city != null ? city.trim() : null);
+        location.put("address", address != null ? address.trim() : null);
+        location.put("typeId", typeIdStr != null && !typeIdStr.trim().isEmpty() ? typeIdStr.trim() : null);
+        return location;
+    }
+
+    static void loadLocationTypes(HttpServletRequest request) throws ServletException {
         List<Map<String, Object>> types = new ArrayList<>();
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("SELECT type_id, type_name FROM LocationTypes ORDER BY type_name");

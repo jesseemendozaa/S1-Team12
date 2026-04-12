@@ -45,6 +45,12 @@ public class LoginServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
                     return;
                 }
+                if ("banned".equals(status)) {
+                    request.setAttribute("error", "Your account is currently banned.");
+                    request.setAttribute("pageTitle", "Login");
+                    request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
+                    return;
+                }
                 if ("deleted".equals(status)) {
                     request.setAttribute("error", "This account has been deleted.");
                     request.setAttribute("pageTitle", "Login");

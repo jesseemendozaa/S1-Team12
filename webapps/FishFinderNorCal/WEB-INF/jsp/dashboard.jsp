@@ -46,7 +46,7 @@
     <tbody>
         <% for (Map<String, Object> report : recentReports) { %>
         <tr>
-            <td><a href="${pageContext.request.contextPath}/reports?id=<%= report.get("reportId") %>"><%= report.get("catchDate") %></a></td>
+            <td><a href="${pageContext.request.contextPath}/report/edit?id=<%= report.get("reportId") %>"><%= report.get("catchDate") %></a></td>
             <td><%= report.get("speciesName") %></td>
             <td><%= report.get("locationName") %></td>
             <td><%= report.get("username") %></td>
@@ -64,7 +64,7 @@
 <h2>Moderator Tools</h2>
 <div class="card">
     <h3>Moderation</h3>
-    <p>Manage users, review reports, and moderate content.</p>
+    <p>Manage users, issue bans, and maintain location and species data.</p>
     <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-primary">Manage Users</a>
 </div>
 <% } %>

@@ -1,84 +1,61 @@
-# FishFinder NorCal — Environment Setup
+# FishFinder NorCal — Setup Guide
 
-## Prerequisites
-- **Java JDK 22** — `C:\Program Files\Java\jdk-22`
-- **MySQL 8.0** — `C:\Program Files\MySQL\MySQL Server 8.0` (runs on **port 3307**)
-- **Apache Tomcat 9.0.115** — `C:\Users\minston\Downloads\apache-tomcat-9.0.115-windows-x64\apache-tomcat-9.0.115`
-- **MySQL Connector/J 9.6.0** — `C:\Users\minston\Downloads\mysql-connector-j-9.6.0\mysql-connector-j-9.6.0\mysql-connector-j-9.6.0.jar`
+## What You Need
+1. **Java JDK 17+** (we use 22)
+2. **MySQL 8.0** running on any port
+3. **Apache Tomcat 9.x** (download from https://tomcat.apache.org/download-90.cgi)
+4. **MySQL Connector/J 9.x** JAR (download from https://dev.mysql.com/downloads/connector/j/)
 
-## Project Structure
+## 1. Set Up the Database
+
+Open MySQL Workbench or the mysql CLI and run the entire `webapps/FishFinderNorCal/sql/schema.sql` file. This creates the `fishfindernorcaldb` database, all 10 tables, and seed data.
+
 ```
-S1-Team12/
-├── setup.md
-└── webapps/
-    └── FishFinderNorCal/
-        ├── home.html
-        ├── css/style.css
-        ├── js/app.js
-        ├── sql/schema.sql
-        ├── src/                    # Java servlet source files
-        │   ├── DBUtil.java
-        │   ├── PasswordUtil.java
-        │   ├── LoginServlet.java
-        │   ├── RegisterServlet.java
-        │   ├── LogoutServlet.java
-        │   ├── AccountServlet.java
-        │   ├── DashboardServlet.java
-        │   ├── LocationListServlet.java
-        │   ├── LocationDetailServlet.java
-        │   ├── LocationFormServlet.java
-        │   ├── CatchReportListServlet.java
-        │   ├── CatchReportFormServlet.java
-        │   ├── CatchReportEditServlet.java
-        │   ├── CommentServlet.java
-        │   ├── FavoriteServlet.java
-        │   └── FavoriteListServlet.java
-        └── WEB-INF/
-            ├── web.xml
-            └── jsp/                # JSP templates
-                ├── header.jsp
-                ├── footer.jsp
-                ├── login.jsp
-                ├── register.jsp
-                ├── dashboard.jsp
-                ├── account.jsp
-                ├── locations.jsp
-                ├── locationDetail.jsp
-                ├── locationForm.jsp
-                ├── reports.jsp
-                ├── reportForm.jsp
-                ├── reportDetail.jsp
-                ├── favorites.jsp
-                └── error.jsp
+mysql -u root -p < webapps/FishFinderNorCal/sql/schema.sql
 ```
 
-## Database
-- **Database name:** `fishfindernorcaldb`
-- **Port:** 3307
-- **User:** root
-- **MySQL config file:** `C:\Users\minston\.my.cnf` (stores credentials)
-- **Connection string:** `jdbc:mysql://localhost:3307/fishfindernorcaldb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
-- **10 tables:** users, moderators, locationtypes, locations, species, catchreports, comments, bans, favorites, locationspecies
+If your MySQL is on a non-default port (e.g. 3307), add `--port=3307`.
 
-## MySQL CLI Access
-```bash
-mysql --defaults-file="C:/Users/minston/.my.cnf" --get-server-public-key fishfindernorcaldb
+## 2. Configure Database Environment Variables
+
+The app reads its MySQL connection settings from environment variables at Tomcat startup:
+
+```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="3307"
+$env:DB_NAME="fishfindernorcaldb"
+$env:DB_USER="root"
+$env:DB_PASSWORD="YOUR_PASSWORD"
 ```
 
-## Compile Servlets
-Bash semicolons break the classpath on Windows Git Bash. Use an argfile:
+If `DB_PASSWORD` is not set, the app will fail fast with a clear configuration error instead of a generic 500.
+
+## 3. Set Up Tomcat
+
+1. Extract Tomcat 9.x somewhere (e.g. `C:\tomcat9`)
+2. Copy the MySQL Connector JAR into `TOMCAT/webapps/FishFinderNorCal/WEB-INF/lib/`
+3. If port 8080 is taken, edit `TOMCAT/conf/server.xml` and change the Connector port
+4. The bundled Tomcat config in this repo already uses `8081` for HTTP and `8006` for shutdown
+
+## 4. Compile the Servlets
+
+The classpath needs `servlet-api.jar`, `jsp-api.jar` (from Tomcat's `lib/`), and the MySQL connector JAR.
+
+On **Windows (Git Bash)**, semicolons in classpath break, so use an argfile:
 
 ```bash
-TOMCAT_HOME="/c/Users/minston/Downloads/apache-tomcat-9.0.115-windows-x64/apache-tomcat-9.0.115"
-PROJECT="/c/Users/minston/projects/cs157a/final_project/S1-Team12/webapps/FishFinderNorCal"
+TOMCAT_HOME="/path/to/tomcat9"
+PROJECT="/path/to/S1-Team12/webapps/FishFinderNorCal"
 WEBAPP="$TOMCAT_HOME/webapps/FishFinderNorCal"
-MYSQL_JAR="/c/Users/minston/Downloads/mysql-connector-j-9.6.0/mysql-connector-j-9.6.0/mysql-connector-j-9.6.0.jar"
+MYSQL_JAR="/path/to/mysql-connector-j-9.x.jar"
 
-# Build argfile (avoids semicolon issues in Git Bash)
-cat > /tmp/javac_args.txt << 'EOF'
+mkdir -p "$WEBAPP/WEB-INF/classes" "$WEBAPP/WEB-INF/lib"
+cp "$MYSQL_JAR" "$WEBAPP/WEB-INF/lib/"
+
+cat > /tmp/javac_args.txt << EOF
 -cp
 EOF
-echo "C:\\Users\\minston\\Downloads\\apache-tomcat-9.0.115-windows-x64\\apache-tomcat-9.0.115\\lib\\servlet-api.jar;C:\\Users\\minston\\Downloads\\apache-tomcat-9.0.115-windows-x64\\apache-tomcat-9.0.115\\lib\\jsp-api.jar;C:\\Users\\minston\\Downloads\\mysql-connector-j-9.6.0\\mysql-connector-j-9.6.0\\mysql-connector-j-9.6.0.jar" >> /tmp/javac_args.txt
+echo "$(cygpath -w "$TOMCAT_HOME/lib/servlet-api.jar");$(cygpath -w "$TOMCAT_HOME/lib/jsp-api.jar");$(cygpath -w "$MYSQL_JAR")" >> /tmp/javac_args.txt
 echo "-d" >> /tmp/javac_args.txt
 cygpath -w "$WEBAPP/WEB-INF/classes" >> /tmp/javac_args.txt
 for f in $PROJECT/src/*.java; do
@@ -88,41 +65,55 @@ done
 javac @/tmp/javac_args.txt
 ```
 
-## Deploy to Tomcat
+On **Mac/Linux** it's simpler:
+
 ```bash
-TOMCAT_HOME="/c/Users/minston/Downloads/apache-tomcat-9.0.115-windows-x64/apache-tomcat-9.0.115"
-PROJECT="/c/Users/minston/projects/cs157a/final_project/S1-Team12/webapps/FishFinderNorCal"
-WEBAPP="$TOMCAT_HOME/webapps/FishFinderNorCal"
-
-# Copy web resources
-cp "$PROJECT/home.html" "$WEBAPP/"
-cp -r "$PROJECT/css" "$WEBAPP/"
-cp -r "$PROJECT/js" "$WEBAPP/"
-cp "$PROJECT/WEB-INF/web.xml" "$WEBAPP/WEB-INF/"
-cp "$PROJECT/WEB-INF/jsp/"*.jsp "$WEBAPP/WEB-INF/jsp/"
-
-# Remove duplicate old servlet classes (Login, Logout, Register conflict with LoginServlet etc.)
-rm -f "$WEBAPP/WEB-INF/classes/Login.class" "$WEBAPP/WEB-INF/classes/Logout.class" "$WEBAPP/WEB-INF/classes/Register.class"
+javac -cp "$TOMCAT_HOME/lib/servlet-api.jar:$TOMCAT_HOME/lib/jsp-api.jar:$MYSQL_JAR" \
+  -d "$WEBAPP/WEB-INF/classes" $PROJECT/src/*.java
 ```
 
-## Start / Stop Tomcat
-```bash
-export CATALINA_HOME="/c/Users/minston/Downloads/apache-tomcat-9.0.115-windows-x64/apache-tomcat-9.0.115"
-export JAVA_HOME="/c/Program Files/Java/jdk-22"
+## 5. Deploy
 
-# Start (port 9090 — Jenkins uses 8080)
+```bash
+cp $PROJECT/home.html "$WEBAPP/"
+cp -r $PROJECT/css "$WEBAPP/"
+cp -r $PROJECT/js "$WEBAPP/"
+cp $PROJECT/WEB-INF/web.xml "$WEBAPP/WEB-INF/"
+cp $PROJECT/WEB-INF/jsp/*.jsp "$WEBAPP/WEB-INF/jsp/"
+```
+
+## 6. Start Tomcat
+
+```bash
+export CATALINA_HOME="/path/to/tomcat9"
+export JAVA_HOME="/path/to/jdk"
+export DB_HOST="localhost"
+export DB_PORT="3307"
+export DB_NAME="fishfindernorcaldb"
+export DB_USER="root"
+export DB_PASSWORD="YOUR_PASSWORD"
 bash "$CATALINA_HOME/bin/startup.sh"
-
-# Stop
-bash "$CATALINA_HOME/bin/shutdown.sh"
 ```
 
-## App URL
-**http://localhost:9090/FishFinderNorCal/**
+Open **http://localhost:8081/FishFinderNorCal/** for this bundled Tomcat setup (or whatever port you configured).
 
-## Known Gotchas
-- **Port 8080 is taken by Jenkins** — Tomcat runs on **9090** (`conf/server.xml` was changed)
-- **Git Bash eats semicolons** in classpath args — use the argfile approach for `javac`
-- **Duplicate servlet files** — `Login.java`, `Logout.java`, `Register.java` are old duplicates of `LoginServlet.java`, `LogoutServlet.java`, `RegisterServlet.java`. They compile but must be **deleted from WEB-INF/classes** or Tomcat fails with URL mapping conflicts
-- **No JSTL** — all JSPs use scriptlets, not `<c:forEach>` / `<c:if>` tags
-- **MySQL auth** — `caching_sha2_password` requires `--get-server-public-key` flag or `allowPublicKeyRetrieval=true` in JDBC URL
+For this repo-local bundled Tomcat on Windows PowerShell, the equivalent startup flow is:
+
+```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="3307"
+$env:DB_NAME="fishfindernorcaldb"
+$env:DB_USER="root"
+$env:DB_PASSWORD="YOUR_PASSWORD"
+$env:CATALINA_HOME=(Resolve-Path .).Path
+$env:CATALINA_BASE=$env:CATALINA_HOME
+.\bin\startup.bat
+```
+
+## 7. Run Tests
+
+```bash
+bash tests/run_tests.sh http://localhost:8081/FishFinderNorCal
+```
+
+Requires `curl` and `mysql` CLI. Runs 32 integration tests.
