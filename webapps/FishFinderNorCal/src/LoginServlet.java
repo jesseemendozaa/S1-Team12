@@ -17,12 +17,12 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String login = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if (username == null || username.trim().isEmpty() ||
+        if (login == null || login.trim().isEmpty() ||
             password == null || password.trim().isEmpty()) {
-            request.setAttribute("error", "Username and password are required.");
+            request.setAttribute("error", "Username or email and password are required.");
             request.setAttribute("pageTitle", "Login");
             request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             return;
@@ -32,9 +32,11 @@ public class LoginServlet extends HttpServlet {
 
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(
-                "SELECT user_id, username, account_status FROM Users WHERE username = ? AND password_hash = ?");
-            ps.setString(1, username.trim());
-            ps.setString(2, hashedPassword);
+                "SELECT user_id, username, account_status FROM Users " +
+                "WHERE (username = ? OR email = ?) AND password_hash = ?");
+            ps.setString(1, login.trim());
+            ps.setString(2, login.trim());
+            ps.setString(3, hashedPassword);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -78,7 +80,7 @@ public class LoginServlet extends HttpServlet {
 
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
-                request.setAttribute("error", "Invalid username or password.");
+                request.setAttribute("error", "Invalid username/email or password.");
                 request.setAttribute("pageTitle", "Login");
                 request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
             }

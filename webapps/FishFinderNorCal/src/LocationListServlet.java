@@ -14,12 +14,15 @@ public class LocationListServlet extends HttpServlet {
         List<Map<String, Object>> locations = new ArrayList<>();
 
         try (Connection conn = DBUtil.getConnection()) {
-            String sql = "SELECT l.location_id, l.location_name, l.description, l.city, " +
+            String sql = "SELECT DISTINCT l.location_id, l.location_name, l.description, l.city, " +
                          "lt.type_name " +
                          "FROM Locations l " +
-                         "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id";
+                         "LEFT JOIN LocationTypes lt ON l.type_id = lt.type_id " +
+                         "LEFT JOIN LocationSpecies ls ON l.location_id = ls.location_id " +
+                         "LEFT JOIN Species s ON ls.species_id = s.species_id";
             if (search != null && !search.trim().isEmpty()) {
-                sql += " WHERE l.location_name LIKE ? OR l.city LIKE ? OR lt.type_name LIKE ?";
+                sql += " WHERE l.location_name LIKE ? OR l.city LIKE ? OR l.address LIKE ? " +
+                       "OR s.common_name LIKE ? OR lt.type_name LIKE ?";
             }
             sql += " ORDER BY l.location_name";
 
@@ -29,6 +32,8 @@ public class LocationListServlet extends HttpServlet {
                 ps.setString(1, pattern);
                 ps.setString(2, pattern);
                 ps.setString(3, pattern);
+                ps.setString(4, pattern);
+                ps.setString(5, pattern);
             }
 
             ResultSet rs = ps.executeQuery();

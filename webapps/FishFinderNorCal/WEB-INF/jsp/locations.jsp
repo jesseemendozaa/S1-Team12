@@ -5,7 +5,7 @@
 <h1>Fishing Locations</h1>
 
 <form method="GET" action="<%= request.getContextPath() %>/locations" class="search-form">
-    <input type="text" name="search" placeholder="Search by name, city, or type..."
+    <input type="text" name="search" placeholder="Search by species, city, address, name, or type..."
            value="<%= request.getAttribute("search") != null ? request.getAttribute("search") : "" %>">
     <button type="submit">Search</button>
 </form>

@@ -50,6 +50,27 @@ public class AccountServlet extends HttpServlet {
 
         try (Connection conn = DBUtil.getConnection()) {
             if ("delete".equals(action)) {
+                PreparedStatement deleteReportCommentsPs = conn.prepareStatement(
+                    "DELETE FROM Comments WHERE report_id IN " +
+                    "(SELECT report_id FROM CatchReports WHERE user_id = ?)");
+                deleteReportCommentsPs.setInt(1, userId);
+                deleteReportCommentsPs.executeUpdate();
+
+                PreparedStatement deleteCommentsPs = conn.prepareStatement(
+                    "DELETE FROM Comments WHERE user_id = ?");
+                deleteCommentsPs.setInt(1, userId);
+                deleteCommentsPs.executeUpdate();
+
+                PreparedStatement deleteFavoritesPs = conn.prepareStatement(
+                    "DELETE FROM Favorites WHERE user_id = ?");
+                deleteFavoritesPs.setInt(1, userId);
+                deleteFavoritesPs.executeUpdate();
+
+                PreparedStatement deleteReportsPs = conn.prepareStatement(
+                    "DELETE FROM CatchReports WHERE user_id = ?");
+                deleteReportsPs.setInt(1, userId);
+                deleteReportsPs.executeUpdate();
+
                 PreparedStatement ps = conn.prepareStatement(
                     "UPDATE Users SET account_status = 'deleted' WHERE user_id = ?");
                 ps.setInt(1, userId);

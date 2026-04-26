@@ -37,8 +37,11 @@ public class LocationFormServlet extends HttpServlet {
         String address = request.getParameter("address");
         String typeIdStr = request.getParameter("typeId");
 
-        if (name == null || name.trim().isEmpty()) {
-            request.setAttribute("error", "Location name is required.");
+        if (name == null || name.trim().isEmpty() ||
+            city == null || city.trim().isEmpty() ||
+            address == null || address.trim().isEmpty() ||
+            typeIdStr == null || typeIdStr.trim().isEmpty()) {
+            request.setAttribute("error", "Location name, city, address, and type are required.");
             request.setAttribute("location", buildLocationFormState(name, description, city, address, typeIdStr));
             loadLocationTypes(request);
             request.setAttribute("pageTitle", "Add Location");
@@ -47,6 +50,22 @@ public class LocationFormServlet extends HttpServlet {
         }
 
         try (Connection conn = DBUtil.getConnection()) {
+            PreparedStatement duplicatePs = conn.prepareStatement(
+                "SELECT location_id FROM Locations " +
+                "WHERE location_name = ? AND city = ? AND address = ?");
+            duplicatePs.setString(1, name);
+            duplicatePs.setString(2, city);
+            duplicatePs.setString(3, address);
+            ResultSet duplicateRs = duplicatePs.executeQuery();
+            if (duplicateRs.next()) {
+                request.setAttribute("error", "That fishing location already exists.");
+                request.setAttribute("location", buildLocationFormState(name, description, city, address, typeIdStr));
+                loadLocationTypes(request);
+                request.setAttribute("pageTitle", "Add Location");
+                request.getRequestDispatcher("/WEB-INF/jsp/locationForm.jsp").forward(request, response);
+                return;
+            }
+
             PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO Locations (location_name, description, city, address, type_id, created_by_user_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
